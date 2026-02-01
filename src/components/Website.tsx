@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { ChevronRight, Mic, Lock, Menu, X, Star } from "lucide-react";
+import { Menu, X, MessageSquare, MapPin, FileText, Home } from "lucide-react";
 import Logo from "./Logo";
 import LiveConcierge from "./LiveConcierge";
 import SecurityFlow from "./SecurityFlow";
 import type { Lead } from "../types";
 import { InstagramIcon, FacebookIcon, LinkedinIcon, ArrowUpRight } from "lucide-react";
-
-
 
 interface WebsiteProps {
   onLeadSubmit: (lead: Partial<Lead>) => void;
@@ -17,335 +15,245 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
   const [showSecurityFlow, setShowSecurityFlow] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 
-  const scrollToSection = (id: string) => {
+  const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const offset = 80;
-    const pos = el.getBoundingClientRect().top + window.pageYOffset - offset;
-    window.scrollTo({ top: pos, behavior: "smooth" });
+    el.scrollIntoView({ behavior: "smooth" });
     setMobileMenu(false);
   };
 
   return (
-    <div className="bg-white text-slate-900 overflow-x-hidden font-sans">
+    <div className="bg-[#0b0f1a] text-white overflow-x-hidden font-serif">
+
       {/* HEADER */}
-      <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur border-b border-manortha-gold/20 px-6 lg:px-20 py-4 flex justify-between items-center">
+      <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black via-[#0b0f1a] to-transparent border-b border-white/10 px-6 lg:px-20 py-4 flex justify-between items-center">
         <Logo size="md" />
 
-        {/* DESKTOP NAV */}
-        <nav className="hidden lg:flex items-center gap-10 text-[11px] font-black uppercase tracking-[0.2em]">
-          <button onClick={() => scrollToSection("portfolio")}>The Portfolio</button>
-          <button onClick={() => scrollToSection("testimonials")}>Voices</button>
-          <button onClick={() => setShowLiveAgent(true)} className="flex items-center gap-2">
-            <Mic size={14} /> Live Tour
-          </button>
-          <button onClick={() => setShowSecurityFlow(true)} className="flex items-center gap-2">
-            <Lock size={14} /> Portal Access
-          </button>
+        <nav className="hidden lg:flex items-center gap-12 text-sm text-white/80">
+          <button onClick={() => scrollTo("hero")}>Home</button>
+          <button onClick={() => scrollTo("projects")}>Projects</button>
+          <button onClick={() => scrollTo("about")}>About Us</button>
+          <button onClick={() => scrollTo("contact")}>Contact Us</button>
         </nav>
 
-        {/* MOBILE MENU */}
+        <button
+          onClick={() => scrollTo("contact")}
+          className="hidden lg:block bg-gradient-to-r from-orange-400 to-orange-600 px-6 py-2 rounded-md text-black font-bold"
+        >
+          Get In Touch
+        </button>
+
         <button className="lg:hidden" onClick={() => setMobileMenu(!mobileMenu)}>
           {mobileMenu ? <X size={26} /> : <Menu size={26} />}
         </button>
       </header>
 
       {mobileMenu && (
-        <div className="fixed top-[72px] inset-x-0 bg-white border-b z-40 lg:hidden">
-          <div className="flex flex-col text-sm font-bold uppercase tracking-widest p-6 gap-6">
-            <button onClick={() => scrollToSection("portfolio")}>The Portfolio</button>
-            <button onClick={() => scrollToSection("testimonials")}>Voices</button>
-            <button onClick={() => setShowLiveAgent(true)}>Live Tour</button>
-            <button onClick={() => setShowSecurityFlow(true)}>Portal Access</button>
+        <div className="fixed top-[72px] inset-x-0 bg-black border-b z-40 lg:hidden">
+          <div className="flex flex-col p-6 gap-6">
+            <button onClick={() => scrollTo("hero")}>Home</button>
+            <button onClick={() => scrollTo("projects")}>Projects</button>
+            <button onClick={() => scrollTo("about")}>About Us</button>
+            <button onClick={() => scrollTo("contact")}>Contact Us</button>
           </div>
         </div>
       )}
 
       <main className="pt-24">
+
+        <Divider />
+
         {/* HERO */}
-        <section className="relative min-h-screen flex items-center">
+        <section id="hero" className="relative min-h-screen flex items-center">
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000"
-              className="w-full h-full object-cover brightness-[0.55]"
+              src="https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=2000"
+              className="w-full h-full object-cover brightness-[0.6]"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
           </div>
 
-          <div className="relative z-10 px-6 lg:px-24 max-w-4xl">
-            <h1 className="text-white font-serif text-4xl sm:text-5xl lg:text-7xl leading-tight">
-              Building <span className="italic text-manortha-gold">Legacies</span>
+          <div className="relative z-10 px-6 lg:px-24 max-w-3xl">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl">
+              Crafting Luxury <br /> Living Spaces
             </h1>
+            <p className="mt-4 text-manortha-gold">From Vision to Reality</p>
 
-            <p className="mt-6 text-white/70 max-w-xl text-sm sm:text-base">
-              Experience the intersection of architectural grandeur and natural serenity in Bangalore's most exclusive enclaves.
-            </p>
-
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => scrollToSection("portfolio")}
-                className="bg-manortha-gold text-black px-8 py-4 font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2"
-              >
-                Explore Our Portfolio <ChevronRight size={16} />
-              </button>
-
-              <button
-                onClick={() => setShowLiveAgent(true)}
-                className="border border-white/40 text-white px-8 py-4 font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 backdrop-blur"
-              >
-                Virtual Web Tour <Mic size={16} />
-              </button>
-            </div>
+            <button
+              onClick={() => scrollTo("projects")}
+              className="mt-8 bg-orange-500 text-black px-6 py-3 rounded font-bold"
+            >
+              Explore Projects
+            </button>
           </div>
         </section>
 
-        {/* PORTFOLIO */}
-        <section id="portfolio" className="py-24 px-6 lg:px-24 bg-white text-center">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-manortha-gold font-bold">
-            Our Architectural Landmarks
-          </p>
+        <Divider />
 
-          <h2 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl">
-            Curated Spaces for <span className="italic">Discerning Living</span>
-          </h2>
+        {/* PROJECTS */}
+        <section id="projects" className="py-20 px-6 lg:px-24">
+          <h2 className="text-3xl mb-10">Our Latest Developments</h2>
 
-          <p className="mt-6 text-slate-500 max-w-2xl mx-auto text-sm">
-            From sustainable gated villa communities to high-rise suites in Bangalore's primary business districts.
-          </p>
-
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {["Manortha Greens", "Skyline Residency", "Emerald Plots"].map((title, i) => (
-              <div key={i} className="rounded-3xl overflow-hidden shadow-xl border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: "Elite Heights", loc: "Gurgaon | Ready to Move" },
+              { title: "Urban Vista", loc: "Noida | Under Construction" },
+              { title: "Palm Residences", loc: "Lucknow | Ready to Move" },
+            ].map((item, i) => (
+              <button
+                key={i}
+                onClick={() => scrollTo("contact")}
+                className="rounded-xl overflow-hidden border border-white/10 text-left hover:scale-[1.02] transition"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800"
                   className="w-full h-64 object-cover"
                 />
-                <div className="p-6 text-left">
-                  <h3 className="font-serif text-xl">{title}</h3>
-                  <p className="mt-2 text-[11px] tracking-widest uppercase text-manortha-gold">
-                    Premium Living
-                  </p>
+                <div className="p-4 bg-black/70">
+                  <h3>{item.title}</h3>
+                  <p className="text-sm text-slate-400">{item.loc}</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
-<section id="testimonials" className="py-32 px-6 lg:px-24 bg-white text-center">
-  <p className="text-[10px] tracking-[0.3em] uppercase text-manortha-gold font-bold">
-    Resident Experiences
-  </p>
+        <Divider />
 
-  <h2 className="mt-4 font-serif text-3xl sm:text-4xl lg:text-5xl">
-    Voices of the <span className="italic">Legacy</span>
-  </h2>
-
-  <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-    {[
-      {
-        name: "Dr. Vikram Sethi",
-        role: "Proprietor, Sethi Clinic",
-        project: "Resident, Manortha Greens",
-        image: "https://randomuser.me/api/portraits/men/32.jpg",
-        text:
-          "The attention to detail in the villa architecture is unparalleled. Manortha provided a sanctuary that perfectly balances my professional life with serene living.",
-      },
-      {
-        name: "Ananya Deshmukh",
-        role: "Senior Architect",
-        project: "Resident, Skyline Residency",
-        image: "https://randomuser.me/api/portraits/women/44.jpg",
-        text:
-          "As an architect, I am incredibly critical of structural integrity and aesthetic flow. Skyline Residency exceeded my expectations in both sustainability and urban design.",
-      },
-      {
-        name: "Rajesh Iyer",
-        role: "Investor",
-        project: "Resident, Emerald Plots",
-        image: "https://randomuser.me/api/portraits/men/52.jpg",
-        text:
-          "Manortha's transparency during the registration process was refreshing. Their appreciation value projections have already proven accurate within just 8 months.",
-      },
-    ].map((item, i) => (
-      <div
-        key={i}
-        className="bg-slate-50 rounded-3xl p-10 shadow border text-left relative"
-      >
-        {/* Stars */}
-        <div className="flex gap-1 mb-4">
-          {[1, 2, 3, 4, 5].map((s) => (
-            <Star
-              key={s}
-              size={14}
-              className="text-manortha-gold fill-manortha-gold"
-            />
-          ))}
-        </div>
-
-        {/* Quote */}
-        <p className="italic text-slate-600 leading-relaxed">
-          “{item.text}”
-        </p>
-
-        {/* Read Story (TOP) */}
-        <button className="mt-4 text-manortha-gold text-xs font-bold tracking-widest uppercase flex items-center gap-1 hover:underline">
-          Read the full story →
-        </button>
-
-        <hr className="my-6 border-slate-200" />
-
-        {/* Footer */}
-        <div className="flex items-center gap-4">
-          <img
-            src={item.image}
-            alt={item.name}
-            className="w-12 h-12 rounded-full object-cover"
-          />
+        {/* ABOUT */}
+        <section id="about" className="py-20 px-6 lg:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="font-bold text-sm">{item.name}</p>
-            <p className="text-manortha-gold text-[10px] uppercase tracking-widest">
-              {item.role}
+            <h2 className="text-3xl mb-2">About Us</h2>
+            <h3 className="text-manortha-gold text-xl mb-4">Welcome to Manortha</h3>
+            <p className="text-slate-300 mb-6">
+              We create luxury living spaces that combine innovative design,
+              quality craftsmanship and prime locations.
             </p>
-            <p className="text-xs text-slate-400">{item.project}</p>
 
-            {/* Read Story (BOTTOM – THIS WAS MISSING) */}
-            <button className="mt-2 text-manortha-gold text-[10px] font-bold tracking-widest uppercase flex items-center gap-1 hover:underline">
-              Read the full story →
+            <button
+              onClick={() => scrollTo("contact")}
+              className="bg-orange-500 text-black px-6 py-3 rounded font-bold"
+            >
+              Learn More
             </button>
           </div>
-        </div>
-      </div>
-    ))}
+
+          <img
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200"
+            className="rounded-xl"
+          />
+        </section>
+
+
+        {/* OUR PROCESS */}
+<section className="py-20 px-6 lg:px-24 text-white">
+  {/* TOP GOLD LINE */}
+  <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent mb-12" />
+
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+    {/* LEFT TEXT */}
+    <div>
+      <h2 className="text-3xl font-serif text-[#d4a853] mb-2">Our Process</h2>
+      <p className="text-slate-300 text-sm">Enquiry & Consultation</p>
+      <p className="text-slate-400 text-xs">
+        Seamless & Bespoke projects
+      </p>
+    </div>
+
+    {/* STEPS */}
+    <div className="lg:col-span-2 flex flex-col lg:flex-row items-center justify-between gap-8">
+      
+      <ProcessStep icon={<MessageSquare />} title="Enquiry &" subtitle="Consultation" />
+      <ProcessLine />
+
+      <ProcessStep icon={<MapPin />} title="Exploration" subtitle="& Site Visit" />
+      <ProcessLine />
+
+      <ProcessStep icon={<FileText />} title="Booking &" subtitle="Approval" />
+      <ProcessLine />
+
+      <ProcessStep icon={<Home />} title="Handover" subtitle="to Move-In" />
+    </div>
   </div>
+
+  {/* BOTTOM GOLD LINE */}
+  <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent mt-12" />
 </section>
 
 
-        {/* CONTACT */}
-        <section className="py-24 px-6 lg:px-24 bg-white text-center">
-          <div className="max-w-4xl mx-auto border border-manortha-gold p-12">
-            <h2 className="font-serif text-4xl mb-10">Begin Your Journey</h2>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                onLeadSubmit({ name: "Lead" });
-                setShowSecurityFlow(true);
-              }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-8"
-            >
-              <input placeholder="Full Name" className="border-b p-3 outline-none" />
-              <input placeholder="Mobile Number" className="border-b p-3 outline-none" />
-              <button className="sm:col-span-2 bg-black text-manortha-gold py-4 uppercase tracking-widest font-bold">
-                Secure Consultation Request
-              </button>
-            </form>
-          </div>
+        {/* STATS */}
+        <section className="py-16 px-6 lg:px-24 grid grid-cols-2 lg:grid-cols-4 text-center gap-10">
+          <Stat value="15+" label="Years of Experience" />
+          <Stat value="20+" label="Completed Projects" />
+          <Stat value="2 Million+" label="Sq. Ft. Delivered" />
+          <Stat value="2 Million+" label="Happy Clients" />
         </section>
-{/* FOOTER */}
-<footer className="bg-black text-white px-6 lg:px-24 pt-24 pb-12">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
 
-    {/* LEFT */}
-    <div className="space-y-6">
-      {/* ONLY LOGO COMPONENT */}
-      <Logo variant="light" size="md" />
+        <Divider />
 
-      <p className="text-slate-400 max-w-sm text-sm leading-relaxed">
-        Crafting high-end living experiences across Bangalore's most
-        sought-after coordinates since 2012.
-      </p>
+        {/* CONTACT */}
+        <section id="contact" className="py-20 px-6 lg:px-24">
+          <h2 className="text-3xl mb-6">Get In Touch</h2>
 
-      {/* SOCIAL ICONS */}
-      <div className="flex gap-4">
-        <a
-          href="https://instagram.com"
-          target="_blank"
-          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-manortha-gold hover:text-black transition"
-        >
-          <InstagramIcon size={18} />
-        </a>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const form = e.target as any;
+              onLeadSubmit({
+                name: form.name.value,
+                email: form.email.value,
+                phone: form.phone.value,
+              });
+              form.reset();
+            }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6"
+          >
+            <input name="name" placeholder="Name" className="input" />
+            <input name="email" placeholder="Email" className="input" />
+            <input name="phone" placeholder="Phone" className="input" />
+            <textarea name="message" placeholder="Message" className="sm:col-span-3 input h-32" />
 
-        <a
-          href="https://facebook.com"
-          target="_blank"
-          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-manortha-gold hover:text-black transition"
-        >
-          <FacebookIcon size={18} />
-        </a>
+            <button className="sm:col-span-3 bg-orange-500 text-black py-3 font-bold">
+              Send Message
+            </button>
+          </form>
+        </section>
 
-        <a
-          href="https://linkedin.com"
-          target="_blank"
-          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-manortha-gold hover:text-black transition"
-        >
-          <LinkedinIcon size={18} />
-        </a>
-      </div>
-    </div>
+        <Divider />
 
-    {/* CENTER */}
-    <div>
-      <p className="text-manortha-gold text-xs font-bold tracking-widest uppercase mb-6">
-        Quick Navigation
-      </p>
-      <ul className="space-y-4 text-sm">
-        <li>
-          <button onClick={() => scrollToSection("portfolio")} className="hover:text-manortha-gold">
-            Residential Portfolio
-          </button>
-        </li>
-        <li>
-          <button className="hover:text-manortha-gold">
-            Commercial Landmarks
-          </button>
-        </li>
-        <li>
-          <button className="hover:text-manortha-gold">
-            Sustainability Report
-          </button>
-        </li>
-        <li>
-          <button onClick={() => setShowSecurityFlow(true)} className="hover:text-manortha-gold">
-            Channel Partner Portal
-          </button>
-        </li>
-      </ul>
-    </div>
+        {/* FOOTER */}
+        <footer className="bg-black text-white px-6 lg:px-24 pt-24 pb-12">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
+            <div>
+              <Logo variant="light" size="md" />
+              <p className="text-slate-400 text-sm mt-4">
+                Crafting high-end living experiences since 2012.
+              </p>
+            </div>
 
-    {/* RIGHT */}
-    <div>
-      <p className="text-manortha-gold text-xs font-bold tracking-widest uppercase mb-6">
-        Headquarters
-      </p>
-      <p className="text-sm leading-relaxed">
-        Suite 402, Prestige Tower<br />
-        Richmond Road, Bangalore<br />
-        Karnataka 560025
-      </p>
+            <div>
+              <p className="text-manortha-gold text-xs mb-4">Quick Navigation</p>
+              <ul className="space-y-3 text-sm">
+                <li><button onClick={() => scrollTo("projects")}>Residential Portfolio</button></li>
+                <li><button>Commercial Landmarks</button></li>
+                <li><button>Sustainability Report</button></li>
+                <li><button onClick={() => setShowSecurityFlow(true)}>Channel Partner Portal</button></li>
+              </ul>
+            </div>
 
-      <a
-        href="mailto:concierge@manortha.com"
-        className="inline-flex items-center gap-2 mt-4 text-manortha-gold hover:underline"
-      >
-        concierge@manortha.com <ArrowUpRight size={14} />
-      </a>
-    </div>
-  </div>
-
-  {/* BOTTOM BAR */}
-  <div className="mt-20 border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-    <p>© 2024 MANORTHA GROUP PRIVATE LIMITED. ALL RIGHTS RESERVED.</p>
-    <div className="flex gap-6">
-      <button className="hover:text-manortha-gold">Privacy Policy</button>
-      <button className="hover:text-manortha-gold">Terms of Service</button>
-      <button className="hover:text-manortha-gold">RERA Compliance</button>
-    </div>
-  </div>
-</footer>
-
-
-
+            <div>
+              <p className="text-manortha-gold text-xs mb-4">Headquarters</p>
+              <p className="text-sm">
+                Suite 402, Prestige Tower<br />
+                Richmond Road, Bangalore
+              </p>
+              <a className="inline-flex items-center gap-2 mt-3 text-manortha-gold">
+                concierge@manortha.com <ArrowUpRight size={14} />
+              </a>
+            </div>
+          </div>
+        </footer>
       </main>
 
       {showLiveAgent && <LiveConcierge onClose={() => setShowLiveAgent(false)} />}
@@ -360,5 +268,27 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
     </div>
   );
 };
+
+const Divider = () => (
+  <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent" />
+);
+
+const ProcessStep = ({ icon, title }: any) => (
+  <div className="flex flex-col items-center gap-3">
+    <div className="text-manortha-gold text-xl">{icon}</div>
+    <p>{title}</p>
+  </div>
+);
+
+const ProcessLine = () => (
+  <div className="hidden lg:block flex-1 h-[1px] bg-manortha-gold/50" />
+);
+
+const Stat = ({ value, label }: any) => (
+  <div>
+    <h3 className="text-4xl text-orange-400 font-bold">{value}</h3>
+    <p className="text-slate-300">{label}</p>
+  </div>
+);
 
 export default Website;

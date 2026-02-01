@@ -1,13 +1,20 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { Lead, SupportedLanguage } from "../types";
 
 /* =========================
    CONFIG
 ========================= */
-const getAI = () =>
-  new GoogleGenAI({
-    apiKey: import.meta.env.VITE_API_KEY, // ✅ correct for Vite
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+/* =========================
+   CHAT SESSION
+========================= */
+export const createAIChatSession = (language: SupportedLanguage = "English") => {
+  return model.startChat({
+    systemInstruction: `You are the Manortha Group Elite AI Concierge. Respond strictly in ${language}.`,
   });
+};
 
 /* =========================
    AI INSIGHTS
@@ -18,25 +25,13 @@ export const getAIInsights = async (
   deepThink: boolean = false
 ): Promise<string> => {
   try {
-    const ai = getAI();
-
-    const config: any = {
-      systemInstruction: `You are a senior executive advisor for a premier luxury real estate developer. Respond in ${language}.`,
-    };
-
-    if (deepThink) {
-      config.thinkingConfig = { thinkingBudget: 32768 };
-    }
-
-    const response = await ai.models.generateContent({
-      model: deepThink ? "gemini-3-pro-preview" : "gemini-3-flash-preview",
-      contents: `Analyze performance data: ${JSON.stringify(data)}. Provide 3 critical business insights.`,
-      config,
-    });
-
-    return response.text ?? "Insights unavailable.";
-  } catch (error) {
-    console.error("Gemini Error:", error);
+    const result = await model.generateContent(
+      `You are a senior real estate executive advisor. Respond in ${language}.
+       Analyze this data and give 3 business insights: ${JSON.stringify(data)}`
+    );
+    return result.response.text();
+  } catch (e) {
+    console.error("getAIInsights error", e);
     return "Insights unavailable.";
   }
 };
@@ -49,19 +44,12 @@ export const editProjectImage = async (
   prompt: string
 ): Promise<string | null> => {
   try {
-    const ai = getAI();
+    const result = await model.generateContent([
+      { inlineData: { data: base64Image.split(",")[1], mimeType: "image/jpeg" } },
+      { text: prompt }
+    ]);
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
-      contents: {
-        parts: [
-          { inlineData: { data: base64Image.split(",")[1], mimeType: "image/jpeg" } },
-          { text: prompt },
-        ],
-      },
-    });
-
-    const parts = response.candidates?.[0]?.content?.parts;
+    const parts = result.response.candidates?.[0]?.content?.parts;
     if (!parts) return null;
 
     for (const part of parts) {
@@ -69,10 +57,9 @@ export const editProjectImage = async (
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
-
     return null;
-  } catch (error) {
-    console.error("Image Edit Error:", error);
+  } catch (e) {
+    console.error("editProjectImage error", e);
     return null;
   }
 };
@@ -82,67 +69,47 @@ export const editProjectImage = async (
 ========================= */
 export const analyzeAssetImage = async (base64Image: string): Promise<string> => {
   try {
-    const ai = getAI();
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
-      contents: {
-        parts: [
-          { inlineData: { data: base64Image.split(",")[1], mimeType: "image/jpeg" } },
-          { text: "Analyze this architectural or construction site image." },
-        ],
-      },
-    });
-
-    return response.text ?? "Analysis failed.";
-  } catch (error) {
-    console.error("Image Analysis Error:", error);
+    const result = await model.generateContent([
+      { inlineData: { data: base64Image.split(",")[1], mimeType: "image/jpeg" } },
+      { text: "Analyze this real estate or construction site image." }
+    ]);
+    return result.response.text();
+  } catch (e) {
+    console.error("analyzeAssetImage error", e);
     return "Analysis failed.";
   }
 };
 
 /* =========================
-   MAPS
+   LANDMARKS
 ========================= */
 export const getNearbyLandmarks = async (location: string) => {
   try {
-    const ai = getAI();
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `What are premium landmarks near ${location}?`,
-      config: { tools: [{ googleMaps: {} }] },
-    });
-
+    const result = await model.generateContent(
+      `List premium landmarks, metro stations and schools near ${location}.`
+    );
     return {
-      text: response.text ?? "",
-      chunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [],
+      text: result.response.text(),
+      chunks: []
     };
-  } catch (error) {
-    console.error("Maps Grounding Error:", error);
+  } catch (e) {
+    console.error("getNearbyLandmarks error", e);
     return null;
   }
 };
 
 /* =========================
-   VIDEO
+   VIDEO ANALYSIS
 ========================= */
-export const analyzeVideoFootage = async (videoUri: string): Promise<string> => {
+export const analyzeVideoFootage = async (videoUrl: string): Promise<string> => {
   try {
-    const ai = getAI();
-
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview",
-      contents: [
-        { fileData: { fileUri: videoUri, mimeType: "video/mp4" } },
-        { text: "Analyze this project footage and estimate progress percentage." },
-      ],
-    });
-
-    return response.text ?? "Analysis failed.";
-  } catch (error) {
-    console.error("Video Analysis Error:", error);
-    return "Analysis failed.";
+    const result = await model.generateContent(
+      `Analyze this real estate project video and estimate construction progress: ${videoUrl}`
+    );
+    return result.response.text();
+  } catch (e) {
+    console.error("analyzeVideoFootage error", e);
+    return "Video analysis failed.";
   }
 };
 
@@ -151,14 +118,10 @@ export const analyzeVideoFootage = async (videoUri: string): Promise<string> => 
 ========================= */
 export const getFastLeadSummary = async (lead: Lead): Promise<string> => {
   try {
-    const ai = getAI();
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
-      contents: `Quick summary of lead ${lead.name}.`,
-    });
-
-    return response.text ?? "No summary.";
+    const result = await model.generateContent(
+      `Summarize this lead and give 1 action advice: ${JSON.stringify(lead)}`
+    );
+    return result.response.text();
   } catch {
     return "No summary.";
   }
@@ -177,60 +140,22 @@ export const calculateLeadScores = async (
   leads: Lead[]
 ): Promise<Record<string, LeadScoreResult>> => {
   try {
-    const ai = getAI();
+    const result = await model.generateContent(
+      `Score these real estate leads from 0 to 100 and explain why:
+       ${JSON.stringify(leads)}`
+    );
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Score these leads 0-100. Return JSON: ${JSON.stringify(leads)}`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            scorings: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  leadId: { type: Type.STRING },
-                  score: { type: Type.NUMBER },
-                  reason: { type: Type.STRING },
-                },
-                required: ["leadId", "score", "reason"],
-              },
-            },
-          },
-          required: ["scorings"],
-        },
-      },
-    });
-
-    const parsed = JSON.parse(response.text ?? '{"scorings":[]}');
+    const text = result.response.text();
+    const parsed = JSON.parse(text);
     const scoreMap: Record<string, LeadScoreResult> = {};
 
-    parsed.scorings.forEach((s: LeadScoreResult) => {
+    parsed.scorings?.forEach((s: LeadScoreResult) => {
       scoreMap[s.leadId] = s;
     });
 
     return scoreMap;
-  } catch (error) {
-    console.error("Gemini Lead Scoring Error:", error);
+  } catch (e) {
+    console.error("calculateLeadScores error", e);
     return {};
   }
-};
-
-/* =========================
-   CHAT SESSION
-========================= */
-export const createAIChatSession = (
-  language: SupportedLanguage = "English"
-) => {
-  const ai = getAI();
-
-  return ai.chats.create({
-    model: "gemini-3-flash-preview",
-    config: {
-      systemInstruction: `You are the Manortha Group Elite AI Concierge. Respond strictly in ${language}.`,
-    },
-  });
 };

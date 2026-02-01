@@ -99,16 +99,19 @@ const App: React.FC = () => {
   ];
 
   const handleSecurityVerified = () => {
-    if (!pendingRole) return;
-    setCurrentRole(pendingRole);
-    setPendingRole(null);
-    setShowSecurityFlow(false);
+  if (!pendingRole) return;
 
-    if (pendingRole === UserRole.CUSTOMER) setActiveTab('customer');
-    else if (pendingRole === UserRole.LEGACY_PARTNER) setActiveTab('legacy-hub');
-    else if (pendingRole === UserRole.SALES) setActiveTab('leads');
-    else setActiveTab('dashboard');
-  };
+  setCurrentRole(pendingRole);
+  setPendingRole(null);
+  setShowSecurityFlow(false);
+  setShowPortalGateway(false); // ✅ THIS WAS MISSING
+
+  if (pendingRole === UserRole.CUSTOMER) setActiveTab('customer');
+  else if (pendingRole === UserRole.LEGACY_PARTNER) setActiveTab('legacy-hub');
+  else if (pendingRole === UserRole.SALES) setActiveTab('leads');
+  else setActiveTab('dashboard');
+};
+
 
   if (!isPortalLoaded) {
     return (
@@ -125,7 +128,7 @@ const App: React.FC = () => {
     return (
       <div className="relative">
         <Website onLeadSubmit={handleAddNewLead} />
-        <div className="fixed top-24 right-8 z-[100] lg:hidden">
+        <div className="fixed top-24 right-8 z-[100] ">
           <button
             onClick={() => setShowPortalGateway(true)}
             className="p-4 bg-manortha-black text-manortha-gold rounded-full shadow-2xl border border-manortha-gold/30"
@@ -139,22 +142,90 @@ const App: React.FC = () => {
   }
 
   if (!currentRole && showPortalGateway) {
-    return (
-      <div className="h-screen bg-manortha-black flex items-center justify-center">
-        {showSecurityFlow && (
-          <SecurityFlow
-            type="LOGIN"
-            identifier={pendingRole ? `${pendingRole.toLowerCase()}@manortha.com` : null}
-            onVerified={handleSecurityVerified}
-            onCancel={() => {
-              setShowSecurityFlow(false);
-              setPendingRole(null);
+  return (
+    <div className="h-screen bg-manortha-black flex items-center justify-center text-white">
+      
+      {!showSecurityFlow && (
+        <div className="w-full max-w-md space-y-6 p-6">
+
+          <h2 className="text-xl font-serif text-center mb-6">
+            Access your workspace
+          </h2>
+
+          {/* SUPER ADMIN */}
+          <button
+            onClick={() => {
+              setPendingRole(UserRole.SUPER_ADMIN);
+              setShowSecurityFlow(true);
             }}
-          />
-        )}
-      </div>
-    );
-  }
+            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+          >
+            <h3 className="text-manortha-gold font-bold">Super Admin</h3>
+            <p className="text-slate-400 text-sm">
+              Full global oversight and system configuration access.
+            </p>
+          </button>
+
+          {/* LEGACY PARTNER */}
+          <button
+            onClick={() => {
+              setPendingRole(UserRole.LEGACY_PARTNER);
+              setShowSecurityFlow(true);
+            }}
+            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+          >
+            <h3 className="text-manortha-gold font-bold">Legacy Partner</h3>
+            <p className="text-slate-400 text-sm">
+              Territorial franchise hub. Manage your pincode monopoly.
+            </p>
+          </button>
+
+          {/* SALES FORCE */}
+          <button
+            onClick={() => {
+              setPendingRole(UserRole.SALES);
+              setShowSecurityFlow(true);
+            }}
+            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+          >
+            <h3 className="text-manortha-gold font-bold">Sales Force</h3>
+            <p className="text-slate-400 text-sm">
+              Lead management, site visits and booking engine.
+            </p>
+          </button>
+
+          {/* CLIENT PORTAL */}
+          <button
+            onClick={() => {
+              setPendingRole(UserRole.CUSTOMER);
+              setShowSecurityFlow(true);
+            }}
+            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+          >
+            <h3 className="text-manortha-gold font-bold">Client Portal</h3>
+            <p className="text-slate-400 text-sm">
+              View property, documents and updates.
+            </p>
+          </button>
+
+        </div>
+      )}
+
+      {showSecurityFlow && (
+        <SecurityFlow
+          type="LOGIN"
+          identifier={pendingRole ? `${pendingRole.toLowerCase()}@manortha.com` : null}
+          onVerified={handleSecurityVerified}
+          onCancel={() => {
+            setShowSecurityFlow(false);
+            setPendingRole(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
