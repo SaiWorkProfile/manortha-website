@@ -40,10 +40,12 @@ const AIChatBox: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatSessionRef = useRef<any>(null);
 
+  const hasKey = Boolean(import.meta.env.VITE_API_KEY);
+
   useEffect(() => {
-    if (!import.meta.env.VITE_API_KEY) return;
+    if (!hasKey) return;
     chatSessionRef.current = createAIChatSession(language);
-  }, [language]);
+  }, [language, hasKey]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,7 +57,7 @@ const AIChatBox: React.FC = () => {
     if (!chatSessionRef.current) {
       setMessages((prev) => [
         ...prev,
-        { role: "model", text: "AI service is not configured." },
+        { role: "model", text: "AI service not configured." },
       ]);
       return;
     }
@@ -78,12 +80,12 @@ const AIChatBox: React.FC = () => {
         fullResponse += chunkText;
 
         setMessages((prev) => {
-          const newMessages = [...prev];
-          newMessages[newMessages.length - 1].text = fullResponse;
-          return newMessages;
+          const copy = [...prev];
+          copy[copy.length - 1].text = fullResponse;
+          return copy;
         });
       }
-    } catch {
+    } catch (error) {
       setMessages((prev) => [
         ...prev,
         { role: "model", text: "AI error. Please try again." },
@@ -94,15 +96,17 @@ const AIChatBox: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-[100] flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-[100]">
       {isOpen && (
-        <div className="
-          w-[380px] max-w-[95vw]
-          h-[85vh] sm:h-[580px]
-          bg-white rounded-3xl shadow-2xl
-          border border-slate-200
-          flex flex-col overflow-hidden
-        ">
+        <div
+          className="
+            mb-4 w-[380px] 
+            max-h-[80vh]
+            bg-white rounded-3xl shadow-2xl 
+            border border-slate-200 
+            flex flex-col overflow-hidden
+          "
+        >
           {/* HEADER */}
           <div className="bg-[#0A1629] p-4 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
@@ -120,6 +124,7 @@ const AIChatBox: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* LANGUAGE */}
               <div className="relative">
                 <button
                   onClick={() => setShowLangs(!showLangs)}
