@@ -37,28 +37,11 @@ const AIChatBox: React.FC = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatSessionRef = useRef<any>(null);
-  const langRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(event.target as Node)) {
-        setShowLangs(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // ✅ Create chat session only if API key exists
-  useEffect(() => {
-    if (!import.meta.env.VITE_API_KEY) {
-      console.error("❌ Missing Gemini API Key");
-      return;
-    }
+    if (!import.meta.env.VITE_API_KEY) return;
     chatSessionRef.current = createAIChatSession(language);
   }, [language]);
 
@@ -72,10 +55,7 @@ const AIChatBox: React.FC = () => {
     if (!chatSessionRef.current) {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "model",
-          text: "AI service is not configured. Please add your API key.",
-        },
+        { role: "model", text: "AI service is not configured." },
       ]);
       return;
     }
@@ -103,14 +83,10 @@ const AIChatBox: React.FC = () => {
           return newMessages;
         });
       }
-    } catch (error) {
-      console.error("Chat error:", error);
+    } catch {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "model",
-          text: "AI error. Please check your API key or quota.",
-        },
+        { role: "model", text: "AI error. Please try again." },
       ]);
     } finally {
       setIsLoading(false);
@@ -118,11 +94,17 @@ const AIChatBox: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 z-[100] flex flex-col items-end">
       {isOpen && (
-        <div className="mb-4 w-[380px] max-w-[95vw] h-[580px] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-fade-in">
+        <div className="
+          w-[380px] max-w-[95vw]
+          h-[85vh] sm:h-[580px]
+          bg-white rounded-3xl shadow-2xl
+          border border-slate-200
+          flex flex-col overflow-hidden
+        ">
           {/* HEADER */}
-          <div className="bg-[#0A1629] p-4 text-white flex items-center justify-between">
+          <div className="bg-[#0A1629] p-4 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-[#C5A059] rounded-lg flex items-center justify-center text-[#0A1629] font-black">
                 M
@@ -137,8 +119,7 @@ const AIChatBox: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2" ref={langRef}>
-              {/* LANGUAGE BUTTON */}
+            <div className="flex items-center gap-2">
               <div className="relative">
                 <button
                   onClick={() => setShowLangs(!showLangs)}
@@ -147,9 +128,8 @@ const AIChatBox: React.FC = () => {
                   <Languages size={14} /> {language} <ChevronDown size={10} />
                 </button>
 
-                {/* DROPDOWN */}
                 {showLangs && (
-                  <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl p-2 w-36 grid gap-1 z-50 animate-scale-in max-h-48 overflow-y-auto">
+                  <div className="absolute top-full right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl p-2 w-32 grid gap-1 z-50">
                     {LANGUAGES.map((lang) => (
                       <button
                         key={lang}
@@ -157,10 +137,10 @@ const AIChatBox: React.FC = () => {
                           setLanguage(lang);
                           setShowLangs(false);
                         }}
-                        className={`text-left px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition ${
+                        className={`text-left px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase ${
                           language === lang
                             ? "bg-[#C5A059] text-[#0A1629]"
-                            : "text-slate-600 hover:bg-slate-100"
+                            : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
                         {lang}
@@ -203,7 +183,7 @@ const AIChatBox: React.FC = () => {
           </div>
 
           {/* INPUT */}
-          <div className="p-4 bg-white border-t border-slate-100">
+          <div className="p-4 bg-white border-t border-slate-100 shrink-0">
             <div className="relative">
               <input
                 type="text"
