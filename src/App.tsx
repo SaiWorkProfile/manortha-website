@@ -9,7 +9,7 @@ import Finance from './components/Finance';
 import Customer from './components/Customer';
 //import AIAssistant from './components/AIAssistant';
 import Website from './components/Website';
-import AIChatBox from './components/AiChatBox';
+import AIChatBox from './components/AIChatBot';
 import VideoStudio from './components/VideoStudio';
 import AssetStudio from './components/AssetStudio';
 import SecurityFlow from './components/SecurityFlow';
