@@ -61,9 +61,9 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
             <button onClick={() => scrollTo("projects")}>Projects</button>
             <button onClick={() => scrollTo("about")}>About Us</button>
 
-            <Link to="/articles" onClick={() => setMobileMenu(false)}>Articles</Link>
-            <Link to="/blogs" onClick={() => setMobileMenu(false)}>Blogs</Link>
-            <Link to="/news" onClick={() => setMobileMenu(false)}>News</Link>
+            <Link to="/articles" onClick={() => setMobileMenu(true)}>Articles</Link>
+            <Link to="/blogs" onClick={() => setMobileMenu(true)}>Blogs</Link>
+            <Link to="/news" onClick={() => setMobileMenu(true)}>News</Link>
 
             <button onClick={() => scrollTo("contact")}>Contact Us</button>
           </div>
