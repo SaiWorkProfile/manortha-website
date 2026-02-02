@@ -1,57 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import  type { Lead, Property, PropertyStatus } from './types';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import type { Lead, Property, PropertyStatus } from './types';
 import { UserRole } from './types';
+
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import Leads from './components/Leads';
 import Partners from './components/Partners';
 import Finance from './components/Finance';
 import Customer from './components/Customer';
-//import AIAssistant from './components/AIAssistant';
 import Website from './components/Website';
 import AIChatBox from './components/AIChatBot';
 import VideoStudio from './components/VideoStudio';
 import AssetStudio from './components/AssetStudio';
 import SecurityFlow from './components/SecurityFlow';
-import WhatsAppSim from './components/WhatsAppSim';
 import SystemSettings from './components/SystemSettings';
 import LegacyDashboard from './components/LegacyDashboard';
 import Logo from './components/Logo';
-import { MOCK_LEADS, MOCK_PROPERTIES } from './constants';
-import { 
-  LayoutDashboard, 
-  Building2, 
-  Users, 
-  Handshake, 
-  IndianRupee, 
-  UserCircle,
-  Menu,
-  X,
-  Bot,
-  Globe,
-  Video,
-  LogOut,
-  ChevronRight,
-  Zap,
-  Target,
-  ArrowLeft,
-  Lock,
-  Crown,
-  Settings,
-  Info,
-  Key,
-  Award,
-  Sparkles
-} from 'lucide-react';
 
-const App: React.FC = () => {
+import Articles from './pages/Articles';
+import Blogs from './pages/Blogs';
+import News from './pages/News';
+
+import { MOCK_LEADS, MOCK_PROPERTIES } from './constants';
+import { Lock } from 'lucide-react';
+
+const AppContent: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole | null>(null);
   const [pendingRole, setPendingRole] = useState<UserRole | null>(null);
   const [showPortalGateway, setShowPortalGateway] = useState(false);
   const [showSecurityFlow, setShowSecurityFlow] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isPortalLoaded, setIsPortalLoaded] = useState(false);
 
   const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
@@ -85,33 +65,19 @@ const App: React.FC = () => {
     );
   };
 
-  const navItems = [
-    { id: 'dashboard', label: 'Command Center', icon: LayoutDashboard, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGEMENT, UserRole.SALES, UserRole.FINANCE, UserRole.CRM_MANAGER] },
-    { id: 'legacy-hub', label: 'Legacy Hub', icon: Award, roles: [UserRole.SUPER_ADMIN, UserRole.LEGACY_PARTNER] },
-    { id: 'inventory', label: 'Inventory Heatmap', icon: Building2, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGEMENT, UserRole.SALES, UserRole.CRM_MANAGER, UserRole.PARTNER, UserRole.LEGACY_PARTNER] },
-    { id: 'leads', label: 'Lead Engine', icon: Users, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.SALES, UserRole.CRM_MANAGER, UserRole.PARTNER, UserRole.LEGACY_PARTNER] },
-    { id: 'asset-studio', label: 'Asset Intelligence', icon: Sparkles, roles: [UserRole.SUPER_ADMIN, UserRole.MANAGEMENT] },
-    { id: 'video-studio', label: 'Video Studio', icon: Video, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGEMENT, UserRole.LEGACY_PARTNER] },
-    { id: 'partners', label: 'Channel Partners', icon: Handshake, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGEMENT, UserRole.LEGACY_PARTNER] },
-    { id: 'finance', label: 'Financial Audit', icon: IndianRupee, roles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.FINANCE] },
-    { id: 'customer', label: 'My Property', icon: UserCircle, roles: [UserRole.CUSTOMER] },
-    { id: 'settings', label: 'System Config', icon: Settings, roles: [UserRole.SUPER_ADMIN] },
-  ];
-
   const handleSecurityVerified = () => {
-  if (!pendingRole) return;
+    if (!pendingRole) return;
 
-  setCurrentRole(pendingRole);
-  setPendingRole(null);
-  setShowSecurityFlow(false);
-  setShowPortalGateway(false); // ✅ THIS WAS MISSING
+    setCurrentRole(pendingRole);
+    setPendingRole(null);
+    setShowSecurityFlow(false);
+    setShowPortalGateway(false);
 
-  if (pendingRole === UserRole.CUSTOMER) setActiveTab('customer');
-  else if (pendingRole === UserRole.LEGACY_PARTNER) setActiveTab('legacy-hub');
-  else if (pendingRole === UserRole.SALES) setActiveTab('leads');
-  else setActiveTab('dashboard');
-};
-
+    if (pendingRole === UserRole.CUSTOMER) setActiveTab('customer');
+    else if (pendingRole === UserRole.LEGACY_PARTNER) setActiveTab('legacy-hub');
+    else if (pendingRole === UserRole.SALES) setActiveTab('leads');
+    else setActiveTab('dashboard');
+  };
 
   if (!isPortalLoaded) {
     return (
@@ -128,7 +94,7 @@ const App: React.FC = () => {
     return (
       <div className="relative">
         <Website onLeadSubmit={handleAddNewLead} />
-        <div className="fixed top-24 right-8 z-[100] ">
+        <div className="fixed top-24 right-8 z-[100]">
           <button
             onClick={() => setShowPortalGateway(true)}
             className="p-4 bg-manortha-black text-manortha-gold rounded-full shadow-2xl border border-manortha-gold/30"
@@ -142,90 +108,82 @@ const App: React.FC = () => {
   }
 
   if (!currentRole && showPortalGateway) {
-  return (
-    <div className="h-screen bg-manortha-black flex items-center justify-center text-white">
-      
-      {!showSecurityFlow && (
-        <div className="w-full max-w-md space-y-6 p-6">
+    return (
+      <div className="h-screen bg-manortha-black flex items-center justify-center text-white">
+        {!showSecurityFlow && (
+          <div className="w-full max-w-md space-y-6 p-6">
+            <h2 className="text-xl font-serif text-center mb-6">
+              Access your workspace
+            </h2>
 
-          <h2 className="text-xl font-serif text-center mb-6">
-            Access your workspace
-          </h2>
+            <button
+              onClick={() => {
+                setPendingRole(UserRole.SUPER_ADMIN);
+                setShowSecurityFlow(true);
+              }}
+              className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+            >
+              <h3 className="text-manortha-gold font-bold">Super Admin</h3>
+              <p className="text-slate-400 text-sm">
+                Full global oversight and system configuration access.
+              </p>
+            </button>
 
-          {/* SUPER ADMIN */}
-          <button
-            onClick={() => {
-              setPendingRole(UserRole.SUPER_ADMIN);
-              setShowSecurityFlow(true);
+            <button
+              onClick={() => {
+                setPendingRole(UserRole.LEGACY_PARTNER);
+                setShowSecurityFlow(true);
+              }}
+              className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+            >
+              <h3 className="text-manortha-gold font-bold">Legacy Partner</h3>
+              <p className="text-slate-400 text-sm">
+                Territorial franchise hub. Manage your pincode monopoly.
+              </p>
+            </button>
+
+            <button
+              onClick={() => {
+                setPendingRole(UserRole.SALES);
+                setShowSecurityFlow(true);
+              }}
+              className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+            >
+              <h3 className="text-manortha-gold font-bold">Sales Force</h3>
+              <p className="text-slate-400 text-sm">
+                Lead management, site visits and booking engine.
+              </p>
+            </button>
+
+            <button
+              onClick={() => {
+                setPendingRole(UserRole.CUSTOMER);
+                setShowSecurityFlow(true);
+              }}
+              className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
+            >
+              <h3 className="text-manortha-gold font-bold">Client Portal</h3>
+              <p className="text-slate-400 text-sm">
+                View property, documents and updates.
+              </p>
+            </button>
+          </div>
+        )}
+
+        {showSecurityFlow && (
+          <SecurityFlow
+            type="LOGIN"
+            identifier={pendingRole ? `${pendingRole.toLowerCase()}@manortha.com` : null}
+            onVerified={handleSecurityVerified}
+            onCancel={() => {
+              setShowSecurityFlow(false);
+              setPendingRole(null);
             }}
-            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
-          >
-            <h3 className="text-manortha-gold font-bold">Super Admin</h3>
-            <p className="text-slate-400 text-sm">
-              Full global oversight and system configuration access.
-            </p>
-          </button>
-
-          {/* LEGACY PARTNER */}
-          <button
-            onClick={() => {
-              setPendingRole(UserRole.LEGACY_PARTNER);
-              setShowSecurityFlow(true);
-            }}
-            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
-          >
-            <h3 className="text-manortha-gold font-bold">Legacy Partner</h3>
-            <p className="text-slate-400 text-sm">
-              Territorial franchise hub. Manage your pincode monopoly.
-            </p>
-          </button>
-
-          {/* SALES FORCE */}
-          <button
-            onClick={() => {
-              setPendingRole(UserRole.SALES);
-              setShowSecurityFlow(true);
-            }}
-            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
-          >
-            <h3 className="text-manortha-gold font-bold">Sales Force</h3>
-            <p className="text-slate-400 text-sm">
-              Lead management, site visits and booking engine.
-            </p>
-          </button>
-
-          {/* CLIENT PORTAL */}
-          <button
-            onClick={() => {
-              setPendingRole(UserRole.CUSTOMER);
-              setShowSecurityFlow(true);
-            }}
-            className="w-full p-6 rounded-3xl bg-gradient-to-br from-black to-slate-900 border border-white/10 hover:border-manortha-gold transition text-left"
-          >
-            <h3 className="text-manortha-gold font-bold">Client Portal</h3>
-            <p className="text-slate-400 text-sm">
-              View property, documents and updates.
-            </p>
-          </button>
-
-        </div>
-      )}
-
-      {showSecurityFlow && (
-        <SecurityFlow
-          type="LOGIN"
-          identifier={pendingRole ? `${pendingRole.toLowerCase()}@manortha.com` : null}
-          onVerified={handleSecurityVerified}
-          onCancel={() => {
-            setShowSecurityFlow(false);
-            setPendingRole(null);
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
+          />
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -248,6 +206,19 @@ const App: React.FC = () => {
         {activeTab === 'settings' && <SystemSettings />}
       </main>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppContent />} />
+        <Route path="/articles" element={<Articles />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/news" element={<News />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

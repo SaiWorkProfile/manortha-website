@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Menu, X, MessageSquare, MapPin, FileText, Home } from "lucide-react";
+import { Menu, X, MessageSquare, MapPin, FileText, Home, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import LiveConcierge from "./LiveConcierge";
 import SecurityFlow from "./SecurityFlow";
 import type { Lead } from "../types";
-import { InstagramIcon, FacebookIcon, LinkedinIcon, ArrowUpRight } from "lucide-react";
 
 interface WebsiteProps {
   onLeadSubmit: (lead: Partial<Lead>) => void;
@@ -29,10 +29,15 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
       <header className="fixed top-0 w-full z-50 bg-gradient-to-b from-black via-[#0b0f1a] to-transparent border-b border-white/10 px-6 lg:px-20 py-4 flex justify-between items-center">
         <Logo size="md" />
 
-        <nav className="hidden lg:flex items-center gap-12 text-sm text-white/80">
+        <nav className="hidden lg:flex items-center gap-10 text-sm text-white/80">
           <button onClick={() => scrollTo("hero")}>Home</button>
           <button onClick={() => scrollTo("projects")}>Projects</button>
           <button onClick={() => scrollTo("about")}>About Us</button>
+
+          <Link to="/articles" className="hover:text-orange-400">Articles</Link>
+          <Link to="/blogs" className="hover:text-orange-400">Blogs</Link>
+          <Link to="/news" className="hover:text-orange-400">News</Link>
+
           <button onClick={() => scrollTo("contact")}>Contact Us</button>
         </nav>
 
@@ -48,12 +53,18 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
         </button>
       </header>
 
+      {/* MOBILE MENU */}
       {mobileMenu && (
         <div className="fixed top-[72px] inset-x-0 bg-black border-b z-40 lg:hidden">
           <div className="flex flex-col p-6 gap-6">
             <button onClick={() => scrollTo("hero")}>Home</button>
             <button onClick={() => scrollTo("projects")}>Projects</button>
             <button onClick={() => scrollTo("about")}>About Us</button>
+
+            <Link to="/articles" onClick={() => setMobileMenu(false)}>Articles</Link>
+            <Link to="/blogs" onClick={() => setMobileMenu(false)}>Blogs</Link>
+            <Link to="/news" onClick={() => setMobileMenu(false)}>News</Link>
+
             <button onClick={() => scrollTo("contact")}>Contact Us</button>
           </div>
         </div>
@@ -144,52 +155,6 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
           />
         </section>
 
-
-        {/* OUR PROCESS */}
-<section className="py-20 px-6 lg:px-24 text-white">
-  {/* TOP GOLD LINE */}
-  <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent mb-12" />
-
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
-    {/* LEFT TEXT */}
-    <div>
-      <h2 className="text-3xl font-serif text-[#d4a853] mb-2">Our Process</h2>
-      <p className="text-slate-300 text-sm">Enquiry & Consultation</p>
-      <p className="text-slate-400 text-xs">
-        Seamless & Bespoke projects
-      </p>
-    </div>
-
-    {/* STEPS */}
-    <div className="lg:col-span-2 flex flex-col lg:flex-row items-center justify-between gap-8">
-      
-      <ProcessStep icon={<MessageSquare />} title="Enquiry &" subtitle="Consultation" />
-      <ProcessLine />
-
-      <ProcessStep icon={<MapPin />} title="Exploration" subtitle="& Site Visit" />
-      <ProcessLine />
-
-      <ProcessStep icon={<FileText />} title="Booking &" subtitle="Approval" />
-      <ProcessLine />
-
-      <ProcessStep icon={<Home />} title="Handover" subtitle="to Move-In" />
-    </div>
-  </div>
-
-  {/* BOTTOM GOLD LINE */}
-  <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent mt-12" />
-</section>
-
-
-
-        {/* STATS */}
-        <section className="py-16 px-6 lg:px-24 grid grid-cols-2 lg:grid-cols-4 text-center gap-10">
-          <Stat value="15+" label="Years of Experience" />
-          <Stat value="20+" label="Completed Projects" />
-          <Stat value="2 Million+" label="Sq. Ft. Delivered" />
-          <Stat value="2 Million+" label="Happy Clients" />
-        </section>
-
         <Divider />
 
         {/* CONTACT */}
@@ -271,24 +236,6 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
 
 const Divider = () => (
   <div className="h-[1px] bg-gradient-to-r from-transparent via-[#d4a853] to-transparent" />
-);
-
-const ProcessStep = ({ icon, title }: any) => (
-  <div className="flex flex-col items-center gap-3">
-    <div className="text-manortha-gold text-xl">{icon}</div>
-    <p>{title}</p>
-  </div>
-);
-
-const ProcessLine = () => (
-  <div className="hidden lg:block flex-1 h-[1px] bg-manortha-gold/50" />
-);
-
-const Stat = ({ value, label }: any) => (
-  <div>
-    <h3 className="text-4xl text-orange-400 font-bold">{value}</h3>
-    <p className="text-slate-300">{label}</p>
-  </div>
 );
 
 export default Website;
