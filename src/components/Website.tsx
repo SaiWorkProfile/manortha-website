@@ -55,20 +55,21 @@ const Website: React.FC<WebsiteProps> = ({ onLeadSubmit }) => {
 
       {/* MOBILE MENU */}
       {mobileMenu && (
-        <div className="fixed top-[72px] inset-x-0 bg-black border-b z-40 lg:hidden">
-          <div className="flex flex-col p-6 gap-6">
-            <button onClick={() => scrollTo("hero")}>Home</button>
-            <button onClick={() => scrollTo("projects")}>Projects</button>
-            <button onClick={() => scrollTo("about")}>About Us</button>
+  <div className="fixed top-[72px] inset-x-0 bg-black border-b z-40 lg:hidden">
+    <div className="flex flex-col items-center text-center p-6 gap-6">
+      <button onClick={() => scrollTo("hero")}>Home</button>
+      <button onClick={() => scrollTo("projects")}>Projects</button>
+      <button onClick={() => scrollTo("about")}>About Us</button>
 
-            <Link to="/articles" onClick={() => setMobileMenu(true)}>Articles</Link>
-            <Link to="/blogs" onClick={() => setMobileMenu(true)}>Blogs</Link>
-            <Link to="/news" onClick={() => setMobileMenu(true)}>News</Link>
+      <Link to="/articles" onClick={() => setMobileMenu(false)}>Articles</Link>
+      <Link to="/blogs" onClick={() => setMobileMenu(false)}>Blogs</Link>
+      <Link to="/news" onClick={() => setMobileMenu(false)}>News</Link>
 
-            <button onClick={() => scrollTo("contact")}>Contact Us</button>
-          </div>
-        </div>
-      )}
+      <button onClick={() => scrollTo("contact")}>Contact Us</button>
+    </div>
+  </div>
+)}
+
 
       <main className="pt-24">
 
